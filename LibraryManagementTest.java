@@ -1,5 +1,8 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
@@ -62,5 +65,15 @@ class LibraryManagementTest {
         }
     }
     
-    
+    @Test
+    void testSingletonTransaction() throws Exception {
+        Constructor<Transaction> constructor = Transaction.class.getDeclaredConstructor();
+        int modifiers = constructor.getModifiers();
+        assertTrue(Modifier.isPrivate(modifiers));
+        
+        // Additional test to ensure only one instance is created
+        Transaction instance1 = Transaction.geTransaction();
+        Transaction instance2 = Transaction.geTransaction();
+        assertSame(instance1, instance2);
+    }
 }

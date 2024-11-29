@@ -78,6 +78,7 @@ public class Transaction {
 			while ((line = reader.readLine()) != null) {
 				System.out.println(line);
 			}
+			reader.close();
 			System.out.println("===========================\n");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
