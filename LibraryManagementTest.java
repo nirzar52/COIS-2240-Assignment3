@@ -1,8 +1,41 @@
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
 class LibraryManagementTest {
+	
+	private Transaction transaction;
+    private Book book;
+    private Member member;
+    
+    @Before
+    void setUp() throws Exception {
+        book = new Book(100, "Test Book");
+        member = new Member(1, "John Doe");
+        transaction = Transaction.geTransaction();
+    }
 
+    @Test
+    void testBorrowReturn() {
+        // Ensure the book is initially available
+        assertTrue(book.isAvailable());
+
+        // Test successful borrowing
+        assertTrue(transaction.borrowBook(book, member));
+        assertFalse(book.isAvailable());
+
+        // Test failed borrowing (book already borrowed)
+        assertFalse(transaction.borrowBook(book, member));
+
+        // Test successful returning
+        assertTrue(transaction.returnBook(book, member));
+        assertTrue(book.isAvailable());
+
+        // Test failed returning (book already returned)
+        assertFalse(transaction.returnBook(book, member));
+    }
+    
     @Test
     void testBookId() {
         try {
@@ -28,4 +61,6 @@ class LibraryManagementTest {
             fail("Unexpected exception thrown: " + e.getMessage());
         }
     }
+    
+    
 }
