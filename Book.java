@@ -36,7 +36,6 @@ public class Book {
 
     // Method to check if a book id is valid
     public boolean isValidId(int id) {
-    	int i;
         return id >= 100 && id <= 999;
     }
 }

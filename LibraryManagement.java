@@ -2,6 +2,7 @@ import java.util.Scanner;
 
 public class LibraryManagement {
     private Library library = new Library();
+    private Transaction transaction = Transaction.geTransaction();
 
     public static void main(String[] args) {
         new LibraryManagement().run();
@@ -13,7 +14,7 @@ public class LibraryManagement {
 
         while (running) {
             System.out.println("===========================");
-            System.out.println("Library Management System");
+            System.out.println("Library Masudo systemctl disable bluetoothnagement System");
             System.out.println("1. Add Member");
             System.out.println("2. Add Book");
             System.out.println("3. Borrow Book");
@@ -76,7 +77,7 @@ public class LibraryManagement {
                     Book book = library.findBookById(bookId);
 
                     if (member != null && book != null) {
-                    	Transaction.borrowBook(book, member);
+                    	transaction.borrowBook(book, member);
                     } else {
                         System.out.println("Invalid member or book ID.");
                     }
@@ -94,7 +95,7 @@ public class LibraryManagement {
                     book = library.findBookById(bookId);
 
                     if (member != null && book != null) {
-                    	Transaction.returnBook(book, member);
+                    	transaction.returnBook(book, member);
                     } else {
                         System.out.println("Invalid member or book ID.");
                     }
@@ -116,7 +117,7 @@ public class LibraryManagement {
                     }
                     break;
                 case 6:
-                	Transaction.displayTransactionHistory();
+                	transaction.displayTransactionHistory();
                     break;
                 case 7:
                     System.out.println("Exiting. Good Bye..");
