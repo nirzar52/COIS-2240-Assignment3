@@ -65,5 +65,21 @@ public class Transaction {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}    
+	}
+    
+    public void displayTransactionHistory() throws IOException {
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader("transactions.txt"));
+			String line;
+			System.out.println("\n=== Transaction History ===");
+			while ((line = reader.readLine()) != null) {
+				System.out.println(line);
+			}
+			System.out.println("===========================\n");
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
 }
