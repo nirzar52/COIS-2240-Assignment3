@@ -1,20 +1,21 @@
+import java.io.IOException;
 import java.util.Scanner;
 
 public class LibraryManagement {
     private Library library = new Library();
     private Transaction transaction = Transaction.geTransaction();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         new LibraryManagement().run();
     }
 
-    private void run() {
+    private void run() throws IOException {
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
         while (running) {
             System.out.println("===========================");
-            System.out.println("Library Masudo systemctl disable bluetoothnagement System");
+            System.out.println("Library Management System");
             System.out.println("1. Add Member");
             System.out.println("2. Add Book");
             System.out.println("3. Borrow Book");
