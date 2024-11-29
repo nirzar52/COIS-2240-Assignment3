@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class LibraryManagementTest {
@@ -12,7 +12,7 @@ class LibraryManagementTest {
     private Book book;
     private Member member;
     
-    @Before
+    @BeforeEach
     void setUp() throws Exception {
         book = new Book(100, "Test Book");
         member = new Member(1, "John Doe");
