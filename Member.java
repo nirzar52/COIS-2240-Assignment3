@@ -11,6 +11,11 @@ public class Member {
         this.name = name;
         this.borrowedBooks = new ArrayList<>();
     }
+    
+    @Override
+    public String toString() {
+        return id + ": " + name;
+    }
 
     // Getter methods
     public int getId() {

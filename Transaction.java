@@ -86,4 +86,18 @@ public class Transaction {
 		}
     }
     
+    public String getTransactionHistory() {
+        StringBuilder history = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader("transactions.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                history.append(line);
+                history.append("\n");
+            }
+        } catch (IOException e) {
+            history.append("Error reading transaction history: ").append(e.getMessage());
+        }
+        return history.toString();
+    }
+    
 }

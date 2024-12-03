@@ -11,6 +11,11 @@ public class Book {
         this.title = title;
         this.available = true;
     }
+    
+    @Override
+    public String toString() {
+        return id + ": " + title;
+    }
 
     // Getter methods
     public int getId() {
