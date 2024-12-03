@@ -41,7 +41,8 @@ public class LibraryGUI extends Application {
         tabPane = new TabPane();
         tabPane.getTabs().addAll(
         		createMembersTab(),
-                createBooksTab()
+                createBooksTab(),
+                createBorrowTab()
         );
 
         Scene scene = new Scene(tabPane, 600, 400);
@@ -103,6 +104,37 @@ public class LibraryGUI extends Application {
         return booksTab;
     }
     
+    private Tab createBorrowTab() {
+        Tab borrowTab = new Tab("Borrow");
+        borrowTab.setClosable(false);
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        ComboBox<Member> memberComboBox = new ComboBox<>();
+        memberComboBox.setPromptText("-- Select a member --");
+        
+        ComboBox<Book> bookComboBox = new ComboBox<>();
+        bookComboBox.setPromptText("-- Select a book --");
+
+        Button borrowButton = new Button("Borrow Book");
+        borrowButton.setOnAction(e -> borrowBook(memberComboBox.getValue(), bookComboBox.getValue()));
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnAction(e -> {
+            refreshMemberList();
+            refreshBookList();
+            memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
+            bookComboBox.setItems(FXCollections.observableArrayList(library.getBooks()));
+        });
+
+        vbox.getChildren().addAll(memberComboBox, bookComboBox, borrowButton, refreshButton);
+        borrowTab.setContent(vbox);
+
+        borrowTab.setOnSelectionChanged(event -> refreshBorrowTab(borrowTab));
+        return borrowTab;
+    }
+    
     private void addMember() {
     	try {
             int id = Integer.parseInt(memberIdField.getText());
@@ -141,6 +173,19 @@ public class LibraryGUI extends Application {
         }
     }
     
+    private void borrowBook(Member member, Book book) {
+        if (member != null && book != null) {
+            if (transaction.borrowBook(book, member)) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Book borrowed successfully.");
+                refreshBookList();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to borrow book. Book may not be available.");
+            }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Please select a member and a book.");
+        }
+    }
+    
     private void refreshMemberList() {
         ObservableList<Member> members = FXCollections.observableArrayList(library.getMembers());
         memberListView.setItems(members);
@@ -160,6 +205,17 @@ public class LibraryGUI extends Application {
     private void refreshBooksTab(Tab tab) {
         if (tab.isSelected()) {
             refreshBookList();
+        }
+    }
+    
+    private void refreshBorrowTab(Tab tab) {
+        if (tab.isSelected()) {
+            ComboBox<Member> memberComboBox = (ComboBox<Member>) ((VBox) tab.getContent()).getChildren().get(0);
+            ComboBox<Book> bookComboBox = (ComboBox<Book>) ((VBox) tab.getContent()).getChildren().get(1);
+            memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
+            bookComboBox.setItems(FXCollections.observableArrayList(
+        		library.getBooks().stream().filter(Book::isAvailable).collect(Collectors.toList())
+            ));
         }
     }
     
