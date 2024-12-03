@@ -16,7 +16,7 @@ public class Transaction {
 	private Transaction() {}
 	
 	// Public static accessor method
-    public static Transaction geTransaction() {
+    public static Transaction getTransaction() {
     	if (instance == null) {
 			instance = new Transaction();
 		}

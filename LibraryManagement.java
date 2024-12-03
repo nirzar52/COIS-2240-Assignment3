@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 public class LibraryManagement {
     private Library library = new Library();
-    private Transaction transaction = Transaction.geTransaction();
+    private Transaction transaction = Transaction.getTransaction();
 
     public static void main(String[] args) throws IOException {
         new LibraryManagement().run();

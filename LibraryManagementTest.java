@@ -16,7 +16,7 @@ class LibraryManagementTest {
     void setUp() throws Exception {
         book = new Book(100, "Test Book");
         member = new Member(1, "John Doe");
-        transaction = Transaction.geTransaction();
+        transaction = Transaction.getTransaction();
     }
 
     @Test
@@ -72,8 +72,8 @@ class LibraryManagementTest {
         assertTrue(Modifier.isPrivate(modifiers));
         
         // Additional test to ensure only one instance is created
-        Transaction instance1 = Transaction.geTransaction();
-        Transaction instance2 = Transaction.geTransaction();
+        Transaction instance1 = Transaction.getTransaction();
+        Transaction instance2 = Transaction.getTransaction();
         assertSame(instance1, instance2);
     }
 }
