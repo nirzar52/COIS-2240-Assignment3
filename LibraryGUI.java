@@ -8,7 +8,6 @@ import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.stage.Stage;
 
 public class LibraryGUI extends Application {
 	private static LibraryGUI instance;
@@ -44,7 +43,8 @@ public class LibraryGUI extends Application {
                 createBooksTab(),
                 createBorrowTab(),
                 createReturnTab(),
-                createViewBorrowedBooksTab()
+                createViewBorrowedBooksTab(),
+                createTransactionHistoryTab()
         );
 
         Scene scene = new Scene(tabPane, 600, 400);
@@ -211,6 +211,26 @@ public class LibraryGUI extends Application {
         return borrowedBooksTab;
     }
     
+    private Tab createTransactionHistoryTab() {
+        Tab historyTab = new Tab("Transaction History");
+        historyTab.setClosable(false);
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        transactionHistoryArea = new TextArea();
+        transactionHistoryArea.setEditable(false);
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnAction(e -> refreshTransactionHistory());
+
+        vbox.getChildren().addAll(transactionHistoryArea, refreshButton);
+        historyTab.setContent(vbox);
+
+        historyTab.setOnSelectionChanged(event -> refreshTransactionHistoryTab(historyTab));
+        return historyTab;
+    }
+    
     private void addMember() {
     	try {
             int id = Integer.parseInt(memberIdField.getText());
@@ -323,6 +343,16 @@ public class LibraryGUI extends Application {
             ListView<Book> borrowedBooksListView = (ListView<Book>) ((VBox) tab.getContent()).getChildren().get(2);
             memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
             borrowedBooksListView.getItems().clear();
+        }
+    }
+    
+    private void refreshTransactionHistory() {
+        transactionHistoryArea.setText(transaction.getTransactionHistory());
+    }
+
+    private void refreshTransactionHistoryTab(Tab tab) {
+        if (tab.isSelected()) {
+            refreshTransactionHistory();
         }
     }
     
