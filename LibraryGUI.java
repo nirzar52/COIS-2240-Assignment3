@@ -42,7 +42,8 @@ public class LibraryGUI extends Application {
         tabPane.getTabs().addAll(
         		createMembersTab(),
                 createBooksTab(),
-                createBorrowTab()
+                createBorrowTab(),
+                createReturnTab()
         );
 
         Scene scene = new Scene(tabPane, 600, 400);
@@ -135,6 +136,44 @@ public class LibraryGUI extends Application {
         return borrowTab;
     }
     
+    private Tab createReturnTab() {
+        Tab returnTab = new Tab("Return");
+        returnTab.setClosable(false);
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        ComboBox<Member> memberComboBox = new ComboBox<>();
+        memberComboBox.setPromptText("-- Select a member --");
+        
+        ComboBox<Book> bookComboBox = new ComboBox<>();
+        bookComboBox.setPromptText("-- Select a book --");
+
+        memberComboBox.setOnAction(e -> {
+            Member selectedMember = memberComboBox.getValue();
+            if (selectedMember != null) {
+                bookComboBox.setItems(FXCollections.observableArrayList(selectedMember.getBorrowedBooks()));
+            } else {
+                bookComboBox.getItems().clear();
+            }
+        });
+
+        Button returnButton = new Button("Return Book");
+        returnButton.setOnAction(e -> returnBook(memberComboBox.getValue(), bookComboBox.getValue()));
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnAction(e -> {
+            memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
+            bookComboBox.getItems().clear();
+        });
+
+        vbox.getChildren().addAll(memberComboBox, bookComboBox, returnButton, refreshButton);
+        returnTab.setContent(vbox);
+
+        returnTab.setOnSelectionChanged(event -> refreshReturnTab(returnTab));
+        return returnTab;
+    }
+    
     private void addMember() {
     	try {
             int id = Integer.parseInt(memberIdField.getText());
@@ -186,6 +225,19 @@ public class LibraryGUI extends Application {
         }
     }
     
+    private void returnBook(Member member, Book book) {
+        if (member != null && book != null) {
+            if (transaction.returnBook(book, member)) {
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Book returned successfully.");
+                refreshBookList();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to return book. It may not have been borrowed by this member.");
+            }
+        } else {
+            showAlert(Alert.AlertType.ERROR, "Error", "Please select a member and a book.");
+        }
+    }
+    
     private void refreshMemberList() {
         ObservableList<Member> members = FXCollections.observableArrayList(library.getMembers());
         memberListView.setItems(members);
@@ -216,6 +268,15 @@ public class LibraryGUI extends Application {
             bookComboBox.setItems(FXCollections.observableArrayList(
         		library.getBooks().stream().filter(Book::isAvailable).collect(Collectors.toList())
             ));
+        }
+    }
+    
+    private void refreshReturnTab(Tab tab) {
+        if (tab.isSelected()) {
+            ComboBox<Member> memberComboBox = (ComboBox<Member>) ((VBox) tab.getContent()).getChildren().get(0);
+            ComboBox<Book> bookComboBox = (ComboBox<Book>) ((VBox) tab.getContent()).getChildren().get(1);
+            memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
+            bookComboBox.getItems().clear();
         }
     }
     
