@@ -43,7 +43,8 @@ public class LibraryGUI extends Application {
         		createMembersTab(),
                 createBooksTab(),
                 createBorrowTab(),
-                createReturnTab()
+                createReturnTab(),
+                createViewBorrowedBooksTab()
         );
 
         Scene scene = new Scene(tabPane, 600, 400);
@@ -174,6 +175,42 @@ public class LibraryGUI extends Application {
         return returnTab;
     }
     
+    private Tab createViewBorrowedBooksTab() {
+        Tab borrowedBooksTab = new Tab("View Borrowed");
+        borrowedBooksTab.setClosable(false);
+
+        VBox vbox = new VBox(10);
+        vbox.setPadding(new Insets(10));
+
+        ComboBox<Member> memberComboBox = new ComboBox<>();
+        memberComboBox.setPromptText("-- Select a member --");
+
+        ListView<Book> borrowedBooksListView = new ListView<>();
+
+        Button viewButton = new Button("View Borrowed Books");
+        viewButton.setOnAction(e -> {
+            Member selectedMember = memberComboBox.getValue();
+            if (selectedMember != null) {
+                ObservableList<Book> borrowedBooks = FXCollections.observableArrayList(selectedMember.getBorrowedBooks());
+                borrowedBooksListView.setItems(borrowedBooks);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Please select a member.");
+            }
+        });
+
+        Button refreshButton = new Button("Refresh");
+        refreshButton.setOnAction(e -> {
+            memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
+            borrowedBooksListView.getItems().clear();
+        });
+
+        vbox.getChildren().addAll(memberComboBox, viewButton, borrowedBooksListView, refreshButton);
+        borrowedBooksTab.setContent(vbox);
+
+        borrowedBooksTab.setOnSelectionChanged(event -> refreshViewBorrowedBooksTab(borrowedBooksTab));
+        return borrowedBooksTab;
+    }
+    
     private void addMember() {
     	try {
             int id = Integer.parseInt(memberIdField.getText());
@@ -277,6 +314,15 @@ public class LibraryGUI extends Application {
             ComboBox<Book> bookComboBox = (ComboBox<Book>) ((VBox) tab.getContent()).getChildren().get(1);
             memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
             bookComboBox.getItems().clear();
+        }
+    }
+    
+    private void refreshViewBorrowedBooksTab(Tab tab) {
+        if (tab.isSelected()) {
+            ComboBox<Member> memberComboBox = (ComboBox<Member>) ((VBox) tab.getContent()).getChildren().get(0);
+            ListView<Book> borrowedBooksListView = (ListView<Book>) ((VBox) tab.getContent()).getChildren().get(2);
+            memberComboBox.setItems(FXCollections.observableArrayList(library.getMembers()));
+            borrowedBooksListView.getItems().clear();
         }
     }
     
